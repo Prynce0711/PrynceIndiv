@@ -59,9 +59,32 @@
         <div id="login-form">
             <h2>Login</h2>
             <form id="loginForm" onsubmit="return handleLogin(event)">
-                <input type="text" id="login-username" placeholder="Username" required><br>
-                <input type="password" id="login-password" placeholder="Password" required><br>
+                <input type="text" id="login-username" placeholder="Username" required style="width:90%; box-sizing:border-box; height:38px;"><br>
+                <div style="position:relative; display:inline-block; width:90%;">
+                    <input type="password" id="login-password" placeholder="Password" required style="width:100%; box-sizing:border-box; height:38px;">
+                    <button type="button" id="togglePassword" style="position:absolute; right:5px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#4f8cff; font-size:0.9em;">Show</button>
+                </div>
+                <br>
                 <button type="submit" class="btn">Login</button>
+                <script>
+                    // Show/hide password toggle
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const passwordInput = document.getElementById('login-password');
+                        const toggleBtn = document.getElementById('togglePassword');
+                        toggleBtn.addEventListener('click', function() {
+                            if (passwordInput.type === 'password') {
+                                passwordInput.type = 'text';
+                                toggleBtn.textContent = 'Hide';
+                            } else {
+                                passwordInput.type = 'password';
+                                toggleBtn.textContent = 'Show';
+                            }
+                        });
+                    });
+                </script>
+            </form>
+                </script>
+                
             </form>
             <button class="btn" onclick="showSignup()">Register</button>
             <div id="loginError" style="color:red; margin-top:10px; display:none;"></div>
