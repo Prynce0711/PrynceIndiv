@@ -49,22 +49,68 @@
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to Voting System</h1>
-        <p><em>"Vote wisely and smart—your choice shapes the future."</em></p>
-        <p><em>"Every vote is a voice—make yours count."</em></p>
-        <blockquote style="font-style: italic; color: #2d3a4a; border-left: 4px solid #4f8cff; margin: 1.5em 0; padding: 0.5em 1em; background: #f4f8fb;">
-            "Smart decisions today, a better tomorrow."
-        </blockquote>
-        <blockquote style="font-style: italic; color: #2d3a4a; border-left: 4px solid #4f8cff; margin: 1.5em 0; padding: 0.5em 1em; background: #f4f8fb;">
-            "A single vote can spark a wave of change."
-        </blockquote>
-        <blockquote style="font-style: italic; color: #2d3a4a; border-left: 4px solid #4f8cff; margin: 1.5em 0; padding: 0.5em 1em; background: #f4f8fb;">
-            "Your vote is your power—use it responsibly."
-        </blockquote>
-        <blockquote style="font-style: italic; color: #2d3a4a; border-left: 4px solid #4f8cff; margin: 1.5em 0; padding: 0.5em 1em; background: #f4f8fb;">
-            "Shape your destiny—vote with purpose and care."
-        </blockquote>
+        <header style="margin-bottom: 2rem;">
+            <img src="Logo.jpg" alt="Logo" style="width:60px;height:60px;border-radius:50%;box-shadow:0 2px 8px rgba(79,140,255,0.2);margin-bottom:1rem;">
+            <h1 style="margin:0;color:#4f8cff;font-size:2rem;letter-spacing:1px;">Welcome to Voting System</h1>
+            <p style="margin:0.5rem 0 0;color:#5a6b7b;font-size:1.05rem;">Empowering your voice, shaping our future</p>
+        
+        
+        <div id="quote-slider" style="min-height: 70px;">
+            <blockquote class="quote-slide active">
+                "Smart decisions today, a better tomorrow."
+            </blockquote>
+            <blockquote class="quote-slide">
+                "A single vote can spark a wave of change."
+            </blockquote>
+            <blockquote class="quote-slide">
+                "Your vote is your power—use it responsibly."
+            </blockquote>
+            <blockquote class="quote-slide">
+                "Shape your destiny—vote with purpose and care."
+            <blockquote class="quote-slide">
+                "Vote wisely and smart—your choice shapes the future"
+            <blockquote class="quote-slide">
+                "Every vote is a voice—make yours count.."
+            </blockquote>
+        </div>
         <a href="login.html"><button class="cta-btn">Get Started</button></a>
     </div>
+    <style>
+        #quote-slider {
+            position: relative;
+            overflow: hidden;
+        }
+        .quote-slide {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.6s, transform 0.6s;
+            font-size: 1.3rem;
+            font-style: italic;
+            color: #2d3a4a;
+            border-left: 4px solid #4f8cff;
+            margin: 1.5em 0;
+            padding: 0.5em 1em;
+            background: #f4f8fb;
+            box-sizing: border-box;
+        }
+        .quote-slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            position: relative;
+        }
+    </style>
+    <script>
+        const quotes = document.querySelectorAll('.quote-slide');
+        let current = 0;
+        setInterval(() => {
+            quotes[current].classList.remove('active');
+            current = (current + 1) % quotes.length;
+            quotes[current].classList.add('active');
+        }, 3000);
+    </script>
 </body>
 </html>
