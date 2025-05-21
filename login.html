@@ -65,7 +65,36 @@
                     <button type="button" id="togglePassword" style="position:absolute; right:5px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#4f8cff; font-size:0.9em;">Show</button>
                 </div>
                 <br>
+
+                <style>
+                    .btn,
+                    .btn-register,
+                    .btn-home {
+                        display: inline-block;
+                        background: #4f8cff;
+                        color: #fff;
+                        padding: 0.5rem 2rem;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 1rem;
+                        cursor: pointer;
+                        margin-top: 1rem;
+                        text-decoration: none;
+                        text-align: center;
+                        transition: background 0.2s;
+                        width: 90%;
+                        box-sizing: border-box;
+                    }
+                    .btn:hover,
+                    .btn-register:hover,
+                    .btn-home:hover {
+                        background: #356ac3;
+                        color: #fff;
+                        text-decoration: none;
+                    }
+                </style>
                 <button type="submit" class="btn">Login</button>
+                
                 <script>
                     // Show/hide password toggle
                     document.addEventListener('DOMContentLoaded', function() {
@@ -87,6 +116,9 @@
                 
             </form>
             <button class="btn" onclick="showSignup()">Register</button>
+            <div style="text-align:center; margin-top:20px;"></div>
+            <a href="index.html" style="display:inline-block; padding:10px 20px; background:#6c757d; color:#fff; border-radius:4px; text-decoration:none;">Back to Home</a>
+
             <div id="loginError" style="color:red; margin-top:10px; display:none;"></div>
             
         </div>
