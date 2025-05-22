@@ -1,90 +1,164 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Welcome - PrynceIndiv</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
-        header { background: #4a90e2; color: #fff; padding: 30px 0; text-align: center; }
-        .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
-        .btn-group { display: flex; flex-direction: column; gap: 15px; margin: 30px 0; }
-        .btn { padding: 15px; background: hsl(212, 72%, 59%); color: #fff; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; transition: background 0.2s;}
-        .btn:hover { background: #357ab8; }
-        .inspiration { margin-top: 40px; font-style: italic; color: #333; text-align: center; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voting Homepage</title>
+  <style>
+    body {
+      background-color: #357ab8;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav {
+      background-color: #245a91;
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      background-color: #ffffff;
+      color: #245a91;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #e6e6e6;
+    }
+
+    .page {
+      display: none;
+      padding: 20px;
+    }
+
+    .active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      background-color: #ffffff;
+      color: #000;
+    }
+
+    th, td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+
+    h1, h2, h3 {
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
-    <header id="main-header" style="transition: max-height 0.5s ease; overflow: hidden; max-height: 500px; opacity: 1;">
-        <h1 id="welcome-message">Welcome!</h1>
-        <div class="btn-group">
-            <button class="btn" onclick="window.location.href='candidate-profile.html'">
-            Show Candidate Profile
-            
-            </button>
-            <button class="btn" onclick="window.location.href='vote.html'">
-            Show Vote
-            </button>
-            <button class="btn" onclick="window.location.href='result.html'">
-            Show Result
-            </button>
-            <button class="btn" onclick="window.location.href='settings.html'">
-            Show Settings
-            </button>
-        </div>
-    </header>
-    <div style="text-align:center; margin-top:10px;">
-       <button id="collapse-btn" class="btn" style="width:40px; padding:5px 0;" title="Collapse header">&#x25B2;</button>
-        <button id="expand-btn" class="btn" style="width:40px; padding:5px 0; display:none;" title="Expand header">&#x25BC;</button> 
-        <!--  <button id="up-btn" class="btn" style="width:40px; padding:5px 0;" title="Scroll Up">&#x25B2;</button>
-        <button id="down-btn" class="btn" style="width:40px; padding:5px 0;" title="Scroll Down">&#x25BC;</button> -->
-    </div>
-    <script>
-        // Get full name from localStorage (set during registration)
-        const fullName = localStorage.getItem('fullName');
-        if (fullName) {
-            document.getElementById('welcome-message').textContent = `Welcome, ${fullName}!`;
-        }
+  <nav>
+    <button onclick="showPage('home')">Home</button>
+    <button onclick="showPage('candidates')">View Candidates</button>
+    <button onclick="showPage('voting')">Voting</button>
+    <button onclick="showPage('results')">View Results</button>
+  </nav>
 
-        // Header collapse/expand logic
-        const header = document.getElementById('main-header');
-        const collapseBtn = document.getElementById('collapse-btn');
-        const expandBtn = document.getElementById('expand-btn');
-        const upBtn = document.getElementById('up-btn');
-        const downBtn = document.getElementById('down-btn');
+  <!-- Home -->
+  <div id="home" class="page active">
+    <h1>Welcome to the Voting System</h1>
+    <p>Please choose an option from the menu to proceed.</p>
+  </div>
 
-        // Set the collapsed height (show a little of the header, e.g., 60px)
-        const collapsedHeight = '60px';
-        const expandedHeight = '500px';
+  <!-- View Candidates -->
+  <div id="candidates" class="page">
+    <h2>Candidates</h2>
 
-        collapseBtn.onclick = function() {
-            header.style.maxHeight = collapsedHeight;
-            header.style.opacity = '1';
-            collapseBtn.style.display = 'none';
-            expandBtn.style.display = 'inline-block';
-        };
-        expandBtn.onclick = function() {
-            header.style.maxHeight = expandedHeight;
-            header.style.opacity = '1';
-            expandBtn.style.display = 'none';
-            collapseBtn.style.display = 'inline-block';
-        };
+    <h3>President</h3>
+    <table>
+      <tr><th>Name</th></tr>
+      <tr><td>Maria Santos</td></tr>
+      <tr><td>Andres Ramos</td></tr>
+    </table>
 
-        // Scroll up to header
-        upBtn.onclick = function() {
-            header.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        };
+    <h3>Vice President</h3>
+    <table>
+      <tr><th>Name</th></tr>
+      <tr><td>Jose Reyes</td></tr>
+      <tr><td>Lorna David</td></tr>
+    </table>
 
-        // Scroll down to container
-        downBtn.onclick = function() {
-            document.querySelector('.container').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        };
-    </script>
-    <div class="container">
-      
-        <div class="inspiration">
-            <!-- Inspiration message -->
-            "Your voice matters. Every vote is a step towards a brighter future. Make it count!"
-        </div>
-    </div>
+    <h3>Senators</h3>
+    <table>
+      <tr><th>Name</th></tr>
+      <tr><td>Ana Lopez</td></tr>
+      <tr><td>Rico Torres</td></tr>
+      <tr><td>Carla Mendoza</td></tr>
+    </table>
+  </div>
+
+  <!-- Voting Page -->
+  <div id="voting" class="page">
+    <h2>Cast Your Vote</h2>
+
+    <h3>President (Select One)</h3>
+    <table>
+      <tr><th>Name</th><th>Vote</th></tr>
+      <tr><td>Maria Santos</td><td><input type="radio" name="president"></td></tr>
+      <tr><td>Andres Ramos</td><td><input type="radio" name="president"></td></tr>
+    </table>
+
+    <h3>Vice President (Select One)</h3>
+    <table>
+      <tr><th>Name</th><th>Vote</th></tr>
+      <tr><td>Jose Reyes</td><td><input type="radio" name="vp"></td></tr>
+      <tr><td>Lorna David</td><td><input type="radio" name="vp"></td></tr>
+    </table>
+
+    <h3>Senators (Select Up To 2)</h3>
+    <table>
+      <tr><th>Name</th><th>Vote</th></tr>
+      <tr><td>Ana Lopez</td><td><input type="checkbox" name="senator"></td></tr>
+      <tr><td>Rico Torres</td><td><input type="checkbox" name="senator"></td></tr>
+      <tr><td>Carla Mendoza</td><td><input type="checkbox" name="senator"></td></tr>
+    </table>
+
+    <button onclick="submitVote()">Submit Vote</button>
+  </div>
+
+  <!-- Results Page -->
+  <div id="results" class="page">
+    <h2>Election Results</h2>
+
+    <h3>President</h3>
+    <p><strong>Leading:</strong> Maria Santos (120 votes)</p>
+
+    <h3>Vice President</h3>
+    <p><strong>Leading:</strong> Jose Reyes (110 votes)</p>
+
+    <h3>Senators</h3>
+    <ul>
+      <li>Ana Lopez – 95 votes</li>
+      <li>Rico Torres – 89 votes</li>
+      <li>Carla Mendoza – 76 votes</li>
+    </ul>
+  </div>
+
+  <script>
+    function showPage(pageId) {
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+    }
+
+    function submitVote() {
+      alert("Your vote has been submitted. Thank you!");
+      showPage('home');
+    }
+  </script>
 </body>
 </html>
