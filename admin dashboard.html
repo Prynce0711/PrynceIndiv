@@ -72,7 +72,40 @@
     </thead>
     <tbody></tbody>
   </table>
+
+
 </div>
+
+<script>
+async function loadUsers() {
+  const response = await fetch("http://127.0.0.1:3000/api/users");
+  const users = await response.json();
+  const tbody = document.querySelector("#votersTable tbody");
+  tbody.innerHTML = "";
+  users.forEach(user => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${user.username}</td>
+      <td><input value="${user.fullname}" id="fullname-${user.id}"></td>
+      <td><input value="${user.address}" id="address-${user.id}"></td>
+      <td>
+        <select id="gender-${user.id}">
+          <option value="Male" ${user.gender === "Male" ? "selected" : ""}>Male</option>
+          <option value="Female" ${user.gender === "Female" ? "selected" : ""}>Female</option>
+          <option value="Other" ${user.gender === "Other" ? "selected" : ""}>Other</option>
+        </select>
+      </td>
+      <td>
+        <button onclick="updateUser(${user.id})">Update</button>
+        <button onclick="deleteUser(${user.id})">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+</script>
+
+
 <div id="candidates" class="page">
   <h2>Manage Candidates</h2>
   <div id="candidatesContainer"></div>
@@ -94,55 +127,6 @@ function showPage(pageId) {
   document.getElementById(pageId).classList.add('active');
   if (pageId === 'voters') loadUsers();
   if (pageId === 'candidates') loadCandidates();
-}
-
-// --- VOTERS (USERS) MANAGEMENT ---
-async function loadUsers() {
-  const response = await fetch("http://127.0.0.1:3000/api/users");
-  const users = await response.json();
-  const tbody = document.querySelector("#votersTable tbody");
-  tbody.innerHTML = "";
-  users.forEach(user => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${user.username}</td>
-      <td><input value="${user.fullname}" id="fullname-${user.id}"></td>
-      <td><input value="${user.address}" id="address-${user.id}"></td>
-      <td>
-        <select id="gender-${user.id}">
-          <option value="Male" ${user.gender === "Male" ? "selected" : ""}>Male</option>
-          <option value="Female" ${user.gender === "Female" ? "selected" : ""}>Female</option>
-          <option value="Other" ${user.gender === "Other" ? "selected" : ""}>Other</option>
-        </select>
-      </td>
-      <td>
-        <button class="action-btn" onclick="updateUser(${user.id})">Update</button>
-        <button class="action-btn" onclick="deleteUser(${user.id})">Delete</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-async function updateUser(id) {
-  const fullname = document.getElementById(`fullname-${id}`).value;
-  const address = document.getElementById(`address-${id}`).value;
-  const gender = document.getElementById(`gender-${id}`).value;
-  await fetch(`http://127.0.0.1:3000/api/users/${id}`, {
-    method: "PUT",
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fullname, address, gender })
-  });
-  alert("User updated!");
-  loadUsers();
-}
-async function deleteUser(id) {
-  if (confirm("Delete this user?")) {
-    await fetch(`http://127.0.0.1:3000/api/users/${id}`, {
-      method: "DELETE"
-    });
-    alert("User deleted!");
-    loadUsers();
-  }
 }
 
 // --- CANDIDATE MANAGEMENT ---
@@ -168,13 +152,29 @@ async function loadCandidates() {
 async function promptAddCandidate() {
   const name = prompt("Enter candidate's name:");
   const position = prompt("Enter position (President, Vice President, Senator, etc):");
+
   if (name && position) {
-    await fetch("http://127.0.0.1:3002/api/candidates", {
-      method: "POST",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, position })
-    });
-    loadCandidates();
+    try {
+      const response = await fetch("http://127.0.0.1:3002/api/candidates", {
+        method: "POST", // ✅ FIXED: use POST instead of ADD
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, position })
+      });
+
+      if (response.ok) {
+        alert("Candidate added successfully!");
+        loadCandidates();
+      } else {
+        const error = await response.text();
+        console.error("Server error:", error);
+        alert("Failed to add candidate.");
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      alert("Error connecting to server.");
+    }
+  } else {
+    alert("Name and position are required.");
   }
 }
 async function removeCandidate(id) {
@@ -188,7 +188,22 @@ async function removeCandidate(id) {
 
 // --- ADMIN SETTINGS (DEMO ONLY) ---
 async function updateAdminInfo() {
-  alert("Admin info updated successfully. (Demo only)");
+  const name = document.getElementById("adminName").value;
+  const email = document.getElementById("adminEmail").value;
+  try {
+    const response = await fetch("http://127.0.0.1:3000/api/admin", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email })
+    });
+    if (response.ok) {
+      alert("Admin info updated successfully.");
+    } else {
+      alert("Failed to update admin info.");
+    }
+  } catch (err) {
+    alert("Error updating admin info.");
+  }
 }
 
 // --- LOGOUT ---
