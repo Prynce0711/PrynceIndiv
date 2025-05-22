@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Voting System</title>
+  <title>Admin Dashboard - Voting System</title>
   <style>
     body {
       background-color: #357ab8;
@@ -12,14 +12,12 @@
       margin: 0;
       padding: 0;
     }
-    
     nav {
       background-color: #245a91;
       padding: 10px;
       display: flex;
       gap: 10px;
     }
-
     button {
       background-color: #ffffff;
       color: #245a91;
@@ -29,9 +27,7 @@
       cursor: pointer;
       font-weight: bold;
     }
-
     button:hover {
-
       background-color: #e6e6e6;
     }
     .page { display: none; padding: 20px; }
@@ -39,16 +35,15 @@
     table {
       width: 100%; background-color: #ffffff; color: #000;
     }
-
     th, td {
       border: 1px solid #000; border-collapse: collapse;
       padding: 8px; text-align: left;
     }
-    
     form input {
       padding: 6px; width: 300px; margin-bottom: 10px;
     }
     h1, h2, h3 { color: #fff; }
+    .action-btn { margin-right: 5px; }
   </style>
 </head>
 <body>
@@ -66,7 +61,16 @@
 <div id="voters" class="page">
   <h2>Manage Voters</h2>
   <table id="votersTable">
-    <tr><th>Name</th><th>Age</th></tr>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Full Name</th>
+        <th>Address</th>
+        <th>Gender</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
   </table>
 </div>
 <div id="candidates" class="page">
@@ -88,13 +92,66 @@
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
+  if (pageId === 'voters') loadUsers();
+  if (pageId === 'candidates') loadCandidates();
 }
+
+// --- VOTERS (USERS) MANAGEMENT ---
+async function loadUsers() {
+  const response = await fetch("http://127.0.0.1:3000/api/users");
+  const users = await response.json();
+  const tbody = document.querySelector("#votersTable tbody");
+  tbody.innerHTML = "";
+  users.forEach(user => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${user.username}</td>
+      <td><input value="${user.fullname}" id="fullname-${user.id}"></td>
+      <td><input value="${user.address}" id="address-${user.id}"></td>
+      <td>
+        <select id="gender-${user.id}">
+          <option value="Male" ${user.gender === "Male" ? "selected" : ""}>Male</option>
+          <option value="Female" ${user.gender === "Female" ? "selected" : ""}>Female</option>
+          <option value="Other" ${user.gender === "Other" ? "selected" : ""}>Other</option>
+        </select>
+      </td>
+      <td>
+        <button class="action-btn" onclick="updateUser(${user.id})">Update</button>
+        <button class="action-btn" onclick="deleteUser(${user.id})">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+async function updateUser(id) {
+  const fullname = document.getElementById(`fullname-${id}`).value;
+  const address = document.getElementById(`address-${id}`).value;
+  const gender = document.getElementById(`gender-${id}`).value;
+  await fetch(`http://127.0.0.1:3000/api/users/${id}`, {
+    method: "PUT",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fullname, address, gender })
+  });
+  alert("User updated!");
+  loadUsers();
+}
+async function deleteUser(id) {
+  if (confirm("Delete this user?")) {
+    await fetch(`http://127.0.0.1:3000/api/users/${id}`, {
+      method: "DELETE"
+    });
+    alert("User deleted!");
+    loadUsers();
+  }
+}
+
+// --- CANDIDATE MANAGEMENT ---
 async function loadCandidates() {
-  const response = await fetch("?action=get_candidates");
+  const response = await fetch("http://127.0.0.1:3002/api/candidates");
   const data = await response.json();
   const container = document.getElementById("candidatesContainer");
   container.innerHTML = '';
-  const positions = ['President', 'Vice President', 'Senator'];
+  const positions = [...new Set(data.map(c => c.position))];
   positions.forEach(position => {
     const group = data.filter(c => c.position === position);
     const section = document.createElement("div");
@@ -102,57 +159,53 @@ async function loadCandidates() {
     const table = section.querySelector("table");
     group.forEach(candidate => {
       const row = table.insertRow();
-      row.innerHTML = `<td>${candidate.name}</td><td><button onclick=\"removeCandidate(${candidate.id})\">Remove</button></td>`;
+      row.innerHTML = `<td>${candidate.name}</td>
+        <td><button onclick="removeCandidate(${candidate.id})">Remove</button></td>`;
     });
     container.appendChild(section);
   });
 }
 async function promptAddCandidate() {
   const name = prompt("Enter candidate's name:");
-  const position = prompt("Enter position (President, Vice President, Senator):");
+  const position = prompt("Enter position (President, Vice President, Senator, etc):");
   if (name && position) {
-    await fetch("", {
+    await fetch("http://127.0.0.1:3002/api/candidates", {
       method: "POST",
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `action=add_candidate&name=${encodeURIComponent(name)}&position=${encodeURIComponent(position)}`
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, position })
     });
     loadCandidates();
   }
 }
 async function removeCandidate(id) {
   if (confirm("Remove this candidate?")) {
-    await fetch("", {
-      method: "POST",
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `action=delete_candidate&id=${id}`
+    await fetch(`http://127.0.0.1:3002/api/candidates/${id}`, {
+      method: "DELETE"
     });
     loadCandidates();
   }
 }
+
+// --- ADMIN SETTINGS (DEMO ONLY) ---
 async function updateAdminInfo() {
-  const name = document.getElementById("adminName").value;
-  const email = document.getElementById("adminEmail").value;
-  const password = prompt("Enter new password:");
-  if (!password) return;
-  await fetch("", {
-    method: "POST",
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `action=update_admin&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-  });
-  alert("Admin info updated successfully.");
+  alert("Admin info updated successfully. (Demo only)");
 }
+
+// --- LOGOUT ---
 function logout() {
   if (confirm("Are you sure you want to logout?")) {
     window.location.href = "admin-login.html";
   }
 }
-document.addEventListener("DOMContentLoaded", () => {
-  loadCandidates();
-});
+
+
+
 </script>
+
+
+
 </body>
+
+
+
 </html>
-
-
-
-

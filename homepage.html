@@ -159,6 +159,18 @@
       alert("Your vote has been submitted. Thank you!");
       showPage('home');
     }
+
+    const logoutBtn = document.createElement('button');
+    logoutBtn.textContent = 'Log Out';
+    logoutBtn.style.marginLeft = 'auto';
+    logoutBtn.onclick = function() {
+      alert('You have been logged out.');
+      href = 'login.html'; // Redirect to login page
+      window.location.href = href;  
+      showPage('home');
+    };
+    document.querySelector('nav').appendChild(logoutBtn);
   </script>
+  
 </body>
 </html>
